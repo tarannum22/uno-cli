@@ -26,8 +26,9 @@ enum class CardValue(val symbol: String) {
 
 // card class should encapsulate valid card creation only
 data class Card(val color: CardColor, val value: CardValue) {
-
     fun getSymbol() :  String{
         return this.color.symbol + this.value.symbol
     }
 }
+
+typealias Collection = Set<Card>
