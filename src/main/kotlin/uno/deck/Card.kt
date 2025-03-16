@@ -8,8 +8,14 @@ enum class CardColor(val symbol: String) {
     WILD("W")
 }
 
+/*
+    For the WILDCARD suite we have a special notation of using
+    - ZERO value for normal WILD
+    - DRAW value for +4
+ */
+
 enum class CardValue(val symbol: String) {
-    ZERO("0"),
+    ZERO("0"),      // is normal wildcard for WILD suite
     ONE("1"),
     TWO("2"),
     THREE("3"),
@@ -21,13 +27,23 @@ enum class CardValue(val symbol: String) {
     NINE("9"),
     SKIP("S"),
     REVERSE("R"),
-    DRAW("+")
+    DRAW("+")       // is +4 for WILD suite
 }
 
 // card class should encapsulate valid card creation only
 data class Card(val color: CardColor, val value: CardValue) {
-    fun getSymbol() :  String{
+    fun getSymbol(): String {
         return this.color.symbol + this.value.symbol
+    }
+
+    companion object {
+        fun create(color: CardColor, value: CardValue): Card {
+            // check for correct wild card creation
+            if (color == CardColor.WILD && !(value == CardValue.ZERO || value == CardValue.DRAW)) {
+                throw Exception("Invalid card creation. Wild card ")
+            }
+            return Card(color, value)
+        }
     }
 }
 

@@ -7,9 +7,9 @@ fun main() {
 
 
     // create a valid card
-    val myCard = Card(CardColor.RED, CardValue.SIX)
+    val myCard = Card.create(CardColor.RED, CardValue.SIX)
 
-    val invalidCard = Card(CardColor.WILD, CardValue.SIX)
+    val invalidCard = Card.create(CardColor.WILD, CardValue.ZERO)
 
     println(myCard.getSymbol())
     println(invalidCard.getSymbol())
