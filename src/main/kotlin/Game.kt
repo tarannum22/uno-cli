@@ -1,16 +1,20 @@
-import uno.deck.Card
-import uno.deck.CardColor
-import uno.deck.CardValue
+import uno.deck.*
 
 fun main() {
-    println("Let's play UNO! \n\n ------------------------")
 
+    welcomeMessage()
 
-    // create a valid card
-    val myCard = Card.create(CardColor.RED, CardValue.SIX)
+    val miniDeck = Deck(DeckType.MINI)
+    miniDeck.showDeck()
+    miniDeck.shuffle()
+    miniDeck.showDeck()
 
-    val invalidCard = Card.create(CardColor.WILD, CardValue.ZERO)
+    println()
 
-    println(myCard.getSymbol())
-    println(invalidCard.getSymbol())
+    val standardDeck = Deck()
+    standardDeck.showDeck()
+    standardDeck.shuffle()
+    standardDeck.showDeck()
+
 }
+

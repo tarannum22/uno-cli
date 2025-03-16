@@ -47,4 +47,4 @@ data class Card(val color: CardColor, val value: CardValue) {
     }
 }
 
-typealias Collection = Set<Card>
+typealias Collection = MutableList<Card>
