@@ -5,7 +5,7 @@ enum class DeckType {
     STANDARD
 }
 
-class Deck(type: DeckType = DeckType.STANDARD) {
+class Deck(type: DeckType) {
     private var deckType: DeckType = type
     private var deck: Collection = mutableListOf()
 
@@ -17,7 +17,6 @@ class Deck(type: DeckType = DeckType.STANDARD) {
     }
 
     private fun createStandardDeck() {
-        println("Creating a Standard Deck")
         this.deckType = DeckType.STANDARD
 
         val cards = mutableListOf<Card>()
@@ -47,11 +46,9 @@ class Deck(type: DeckType = DeckType.STANDARD) {
         }
 
         this.deck = cards
-        println("Created a Standard deck with ${this.deck.count()} cards")
     }
 
     private fun createMiniDeck() {
-        println("Creating a Mini Deck")
         this.deckType = DeckType.MINI
 
         val cards = mutableListOf<Card>()
@@ -79,7 +76,14 @@ class Deck(type: DeckType = DeckType.STANDARD) {
         }
 
         this.deck = cards
-        println("Created a Mini deck with ${this.deck.count()} cards")
+    }
+
+    fun showDeck() {
+        println("-----DECK (has ${deck.count()} cards)-----")
+        this.deck.forEach {
+            print(it.getSymbol().padEnd(3))
+        }
+        println()
     }
 
     fun shuffle() {
@@ -87,11 +91,15 @@ class Deck(type: DeckType = DeckType.STANDARD) {
         this.deck.shuffle()
     }
 
-    fun showDeck() {
-        println("-----DECK-----")
-        this.deck.forEach {
-            print(it.getSymbol().padEnd(3))
+    fun dealFromDeck(n: Int): Collection {
+        val dealingCards = mutableListOf<Card>()
+        for ( i in 1 .. n) {
+            dealingCards.add(this.deck.removeFirst())
         }
-        println()
+        return dealingCards
+    }
+
+    fun peekFirst(): Card {
+        return deck[0]
     }
 }
