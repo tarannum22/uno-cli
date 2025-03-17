@@ -36,6 +36,13 @@ data class Card(val color: CardColor, val value: CardValue) {
         return this.color.symbol + this.value.symbol
     }
 
+    fun isPowerCard(): Boolean {
+        return color == CardColor.WILD ||
+        value == CardValue.SKIP ||
+        value == CardValue.REVERSE ||
+        value == CardValue.DRAW
+    }
+
     companion object {
         fun create(color: CardColor, value: CardValue): Card {
             // check for correct wild card creation

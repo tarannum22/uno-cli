@@ -11,6 +11,9 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
     private var direction = false
     private var currentPlayer = 0
     private var playinCard: Card? = null
+    private lateinit var currentColor: CardColor
+    private var winnerList = mutableListOf<Player>()
+    val turns = mutableListOf<Turn>()
 
     init {
 
@@ -23,10 +26,11 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
         deck.showDeck()
 
         activePlayers.forEach {
-            it.give(deck.dealFromDeck(7))
+            it.draw(deck.dealFromDeck(7))
         }
 
         pickPlayingCard()
+        gameStart()
     }
 
     fun showInfo() {
@@ -47,9 +51,7 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
     private fun pickPlayingCard() {
         println()
         println("Picking a playing card")
-        var validPalyingCard = false
-        deck.showDeck()
-        while (!validPalyingCard) {
+        while (true) {
             val topCard = deck.peekFirst()
 
             if (topCard.color == CardColor.WILD ||
@@ -60,19 +62,23 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
                 println("Invalid First Card ${topCard.getSymbol()}")
                 deck.shuffle()
             } else {
-                println("Playing Card : ${topCard.getSymbol()}")
                 playinCard = deck.dealFromDeck(1).first()
-                validPalyingCard = !validPalyingCard
+                currentColor = playinCard!!.color
+                break
             }
         }
-        deck.showDeck()
         println("Done Picking a playing card")
         println()
     }
-
 
     fun reverse() {
         direction = !direction
     }
 
+    private fun gameStart() {
+        Turn(activePlayers[currentPlayer], turns.count(), deck, playinCard!!, currentColor).playTurn()
+    }
+
 }
+
+
