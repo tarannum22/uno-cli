@@ -15,8 +15,8 @@ fun main() {
 
     val players = mutableSetOf(alice, bob, charlie)
 
-    val ourGame = Game(players, DeckType.MINI)
+    val game = Game(players, DeckType.MINI)
 
-    ourGame.showInfo()
+    game.showInfo()
 }
 

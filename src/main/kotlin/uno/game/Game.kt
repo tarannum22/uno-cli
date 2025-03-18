@@ -13,7 +13,7 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
     private var playinCard: Card? = null
     private lateinit var currentColor: CardColor
     private var winnerList = mutableListOf<Player>()
-    val turns = mutableListOf<Turn>()
+    private var turns = mutableListOf<TurnSummary>()
 
     init {
 
@@ -30,7 +30,7 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
         }
 
         pickPlayingCard()
-        gameStart()
+        playGame()
     }
 
     fun showInfo() {
@@ -71,12 +71,40 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
         println()
     }
 
-    fun reverse() {
+    private fun reverse() {
         direction = !direction
     }
 
-    private fun gameStart() {
-        Turn(activePlayers[currentPlayer], turns.count(), deck, playinCard!!, currentColor).playTurn()
+    private fun playGame() {
+        while (true) {
+
+            val lastTurn = Turn(
+                activePlayers[currentPlayer],
+                turns.count(),
+                deck,
+                playinCard!!,
+                currentColor
+            ).playTurn()
+
+            println(lastTurn)
+            turns.add(lastTurn)
+
+            // check for reverse
+            if(lastTurn.playedCard.value == CardValue.REVERSE) {
+                reverse()
+            }
+
+            // check for skip
+
+
+            // wild card
+
+
+            // draw
+
+            // select next player
+
+        }
     }
 
 }

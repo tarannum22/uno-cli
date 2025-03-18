@@ -17,6 +17,10 @@ class Player(private val name: String) {
 
     fun showHand() {
         println("-----HAND of ${name}-----")
+        this.hand.forEachIndexed { i, _ ->
+            print(i.toString().padEnd(3))
+        }
+        println()
         this.hand.forEach {
             print(it.getSymbol().padEnd(3))
         }
