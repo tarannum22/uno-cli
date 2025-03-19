@@ -86,8 +86,7 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
                 currentColor
             ).playTurn()
 
-            println(lastTurn)
-
+            playinCard = lastTurn.playedCard
             turns.add(lastTurn)
 
             // check for reverse
@@ -97,6 +96,7 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
 
             selectNextPlayer(lastTurn.playedCard)
 
+            println(lastTurn)
 
             // wild card
 
