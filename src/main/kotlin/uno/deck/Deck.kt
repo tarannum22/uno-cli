@@ -1,5 +1,7 @@
 package uno.deck
 
+import uno.deck.Collection
+
 enum class DeckType {
     MINI,
     STANDARD
@@ -101,5 +103,9 @@ class Deck(type: DeckType) {
 
     fun peekFirst(): Card {
         return deck[0]
+    }
+
+    fun returnToDeck(cardStash : Collection){
+        deck += cardStash
     }
 }

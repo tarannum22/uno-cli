@@ -130,7 +130,15 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
 
             }
 
+            if (lastTurn.playerCardCount == 0){
+                //WIN CONDITION
+                println("Player ${lastTurn.player.getName()} has won.")
+                break
+            }
+
         }
+
+        println("Game has ended.")
     }
 
     private fun selectNextPlayer(playedCard: Card) {

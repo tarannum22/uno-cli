@@ -8,6 +8,7 @@ import uno.deck.Deck
 enum class Move {
     PLAY_HAND,
     DRAW,
+    DRAW_STASH,
     PASS
 }
 
@@ -25,7 +26,7 @@ data class TurnSummary(
     val playedCard: Card,
     val colorChoice: CardColor?,
     val cardStash: MutableList<Card>,
-    val moves: MutableList<String>
+    val playerCardCount: Int
 )
 
 class Turn(
@@ -49,10 +50,10 @@ class Turn(
 
     fun playTurn(): TurnSummary {
 
-        println("------ TURN $turnNumber for ------------------------------------")
-        println("Playing Card : ${playingCard.getSymbol()} ${playingCard.color} ${playingCard.value} ")
+        println("------ TURN $turnNumber for PLAYER ***[${player.getName()}]*** ------------------------------------")
+        println("PLAYING Card : ${playingCard.getSymbol()} ${playingCard.color} ${playingCard.value} ")
+        println("PLAYING Color : $currentColor ")
         println()
-        println("PLAYER ***[${player.getName()}]***")
 
         player.showHand()
 
@@ -69,7 +70,7 @@ class Turn(
             playedCard,
             colorChoice,
             cardStash,
-            mutableListOf("move1, move2")
+            player.hand.size
         )
     }
 
@@ -81,20 +82,19 @@ class Turn(
                     turnFSM.updateTurnState(Move.PLAY_HAND)
                 } else {
                     drawCard()
+                    if (playingCard.value == CardValue.DRAW) {
+                        println("You have drawn the stash. Ending the turn.")// if drawing stash pass
+                        pass()
+                        turnFSM.updateTurnState(Move.DRAW_STASH)
+                    }
                     turnFSM.updateTurnState(Move.DRAW)
                 }
             }
 
             TurnState.CARD_DRAWN -> {
                 if (player.hasPlayingCard(playingCard, currentColor)) {
-                    if (playingCard.value == CardValue.DRAW){
-                        println("You have drawn the stash. Ending the turn.")// if drawing stash pass
-                        pass()
-                        turnFSM.updateTurnState(Move.PASS)
-                    } else {
-                        playHand()
-                        turnFSM.updateTurnState(Move.PLAY_HAND)
-                    }
+                    playHand()
+                    turnFSM.updateTurnState(Move.PLAY_HAND)
                 } else {
                     pass()
                     turnFSM.updateTurnState(Move.PASS)
@@ -117,12 +117,14 @@ class Turn(
         val pickedCard = pickCard(maxChoice)
 
         if (pickedCard.color == CardColor.WILD) {
-           currentColor = pickColor()
+            colorChoice = pickColor()
+            println("Picked color. Current color is $colorChoice")
         }
 
         player.showHand()
         println("You have played $pickedCard")
         playedCard = pickedCard
+        deck.returnToDeck(mutableListOf(playingCard))
     }
 
 
@@ -174,7 +176,7 @@ class Turn(
 
 
     private fun drawCard() {
-        if(playingCard.value == CardValue.DRAW) {
+        if (playingCard.value == CardValue.DRAW) {
             println("You will have to draw ${cardStash.size}.")
             //print the stash
             player.draw(cardStash)
@@ -221,6 +223,10 @@ class TurnStateMachine() {
                         state = TurnState.CARD_DRAWN
                     }
 
+                    Move.DRAW_STASH -> {
+                        state = TurnState.TURN_END
+                    }
+
                     Move.PASS -> illegalStateTransition(state, move)
                 }
             }
@@ -232,9 +238,12 @@ class TurnStateMachine() {
                     }
 
                     Move.DRAW -> illegalStateTransition(state, move)
+                    Move.DRAW_STASH -> illegalStateTransition(state, move)
+
                     Move.PASS -> {
                         state = TurnState.TURN_END
                     }
+
                 }
             }
 

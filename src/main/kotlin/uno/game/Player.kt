@@ -8,7 +8,7 @@ import utlis.generateUniqueId
 
 class Player(private val name: String) {
     private val id = generateUniqueId()
-    private var hand: Collection = mutableListOf()
+    var hand: Collection = mutableListOf()
     val isUNO: Boolean = false
 
     fun showInfo() {
