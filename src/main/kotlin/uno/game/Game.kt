@@ -76,9 +76,9 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
     }
 
     private fun playGame() {
-        while (true) {
+        val cardStash = mutableListOf<Card>()
 
-            var cardStash = mutableListOf<Card>()
+        while (true) {
 
             val lastTurn = Turn(
                 activePlayers[currentPlayer],
@@ -106,12 +106,12 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
 
             // wild card
             // if wild card was played update the color
-            if(lastTurn.colorChoice != null){
+            if (lastTurn.colorChoice != null) {
                 currentColor = lastTurn.colorChoice
             }
 
             // draw
-            if(lastTurn.playedCard.value == CardValue.DRAW){
+            if (lastTurn.playedCard.value == CardValue.DRAW) {
                 val drawnCards = when (lastTurn.playedCard.color) {
                     CardColor.WILD -> {
                         deck.dealFromDeck(4)
@@ -122,7 +122,12 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
                     }
                 }
 
-                cardStash+= drawnCards
+                println("Drawn cards $drawnCards")
+
+                cardStash += drawnCards
+
+                println("Stash - $cardStash")
+
             }
 
         }
@@ -133,14 +138,11 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
             // clockwise
             true -> {
                 // check for skip
-                println(activePlayers.size)
-                println(currentPlayer)
                 currentPlayer = if (playedCard.value == CardValue.SKIP) {
                     (currentPlayer + 2) % activePlayers.size
                 } else {
                     (currentPlayer + 1) % activePlayers.size
                 }
-                println(currentPlayer)
             }
 
             // anti-clockwise

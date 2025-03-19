@@ -36,35 +36,52 @@ class Player(private val name: String) {
     }
 
     private fun hasColor(color: CardColor): Boolean {
-        return hand.any { it.color == color }
+        val check = hand.any { it.color == color }
+        if (check) {
+            println("hpc color match")
+        }
+        return check
     }
 
     private fun hasValue(value: CardValue): Boolean {
-        return hand.any { it.value == value }
+        val check = hand.any { it.value == value }
+        if (check) {
+            println("hpc value match")
+        }
+        return check
     }
 
     private fun hasWild(): Boolean {
-        return hand.any { it.color == CardColor.WILD }
+        val check = hand.any { it.color == CardColor.WILD }
+        if (check) {
+            println("hpc wild match")
+        }
+        return check
     }
 
     fun hasPlayingCard(playingCard: Card, currentColor: CardColor): Boolean {
-        return if (playingCard.value == CardValue.DRAW) {
-            if(playingCard.color == CardColor.WILD){
+        val check = if (playingCard.value == CardValue.DRAW) {
+            if (playingCard.color == CardColor.WILD) {
+                println("HPC wild draw")
                 checkHandForWildDraw()
             } else {
+                println("HPC color draw")
                 checkHandForDraw()
             }
         } else {
+            println("HPC else")
             (hasColor(currentColor) || hasValue(playingCard.value) || hasWild())
         }
+        println("Has playing card : $check")
+        return check
     }
 
     private fun checkHandForDraw(): Boolean {
-        return (hand.firstOrNull { it.value == CardValue.DRAW } ) != null
+        return hand.any { it.value == CardValue.DRAW }
     }
 
     private fun checkHandForWildDraw(): Boolean {
-        return (hand.firstOrNull { it.value == CardValue.DRAW && it.color == CardColor.WILD } ) != null
+        return hand.any { it.value == CardValue.DRAW && it.color == CardColor.WILD }
     }
 
     fun getHandCount(): Int {

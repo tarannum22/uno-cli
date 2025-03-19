@@ -33,7 +33,7 @@ class Turn(
     private val turnNumber: Int,
     private val deck: Deck,
     private val playingCard: Card,
-    private val currentColor: CardColor,
+    private var currentColor: CardColor,
     private val cardStash: MutableList<Card>
 ) {
 
@@ -49,9 +49,9 @@ class Turn(
 
     fun playTurn(): TurnSummary {
 
+        println("------ TURN $turnNumber for ------------------------------------")
         println("Playing Card : ${playingCard.getSymbol()} ${playingCard.color} ${playingCard.value} ")
         println()
-        println("--- TURN $turnNumber for ---")
         println("PLAYER ***[${player.getName()}]***")
 
         player.showHand()
@@ -111,7 +111,7 @@ class Turn(
         val pickedCard = pickCard(maxChoice)
 
         if (pickedCard.color == CardColor.WILD) {
-            pickColor()
+           currentColor = pickColor()
         }
 
         player.showHand()
@@ -176,7 +176,7 @@ class Turn(
             println("You don't have a valid card to play. You will draw a card.")
             player.draw(deck.dealFromDeck(1))
         }
-        print("Your new hand ----")
+        println("Your new hand ----")
         player.showHand()
     }
 
