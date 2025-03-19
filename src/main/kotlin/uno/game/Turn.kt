@@ -87,8 +87,14 @@ class Turn(
 
             TurnState.CARD_DRAWN -> {
                 if (player.hasPlayingCard(playingCard, currentColor)) {
-                    playHand()
-                    turnFSM.updateTurnState(Move.PLAY_HAND)
+                    if (playingCard.value == CardValue.DRAW){
+                        println("You have drawn the stash. Ending the turn.")// if drawing stash pass
+                        pass()
+                        turnFSM.updateTurnState(Move.PASS)
+                    } else {
+                        playHand()
+                        turnFSM.updateTurnState(Move.PLAY_HAND)
+                    }
                 } else {
                     pass()
                     turnFSM.updateTurnState(Move.PASS)
