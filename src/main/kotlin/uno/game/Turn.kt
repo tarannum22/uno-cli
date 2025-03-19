@@ -3,6 +3,7 @@ package uno.game
 import uno.deck.Card
 import uno.deck.CardColor
 import uno.deck.Deck
+import java.awt.Choice
 
 enum class Move {
     PLAY_HAND,
@@ -22,6 +23,7 @@ data class TurnSummary(
     val turnNumber: Int,
     val playingCard: Card,
     val playedCard: Card,
+    val colorChoice: CardColor?,
     val moves: MutableList<String>
 )
 
@@ -35,6 +37,13 @@ class Turn(
 
     private var turnFSM = TurnStateMachine()
     private lateinit var playedCard: Card
+    private var colorChoice : CardColor? = null
+    private val colors = mapOf(
+        0 to CardColor.RED,
+        1 to CardColor.BLUE,
+        2 to CardColor.GREEN,
+        3 to CardColor.YELLOW
+    )
 
     fun playTurn(): TurnSummary {
 
@@ -56,6 +65,7 @@ class Turn(
             turnNumber,
             playingCard,
             playedCard,
+            colorChoice,
             mutableListOf("move1, move2")
         )
     }
@@ -95,23 +105,64 @@ class Turn(
         println("You have the option to play your hand.")
         println("Please pick a card. Enter the position of the card you want to play.")
 
-        val playerChoice: Int
-        while (true) {
-            println("Pick a number between 0 and $maxChoice. Counting from left.")
-            val input = readln()
-            if (input.toInt() in 0..maxChoice) {
-                playerChoice = input.toInt()
-                break
-            } else {
-                println("Your choice $input is not valid")
-            }
+        val pickedCard = pickCard(maxChoice)
+
+        if (pickedCard.color == CardColor.WILD){
+            pickColor()
         }
 
-        val pickedCard = player.playCard(playerChoice)
         player.showHand()
         println("You have played $pickedCard")
         playedCard = pickedCard
     }
+
+
+    private fun pickColor(): CardColor {
+        try {
+            while (true) {
+                println("Pick a color to change into. Choose the number associated with the color.")
+                showColors()
+
+                // Read input and ensure it's a valid number
+                val colorInput = readln().trim()
+                if (colorInput.toIntOrNull() != null) {
+                    val index = colorInput.toInt()
+
+                    // Check if the index is within the valid range
+                    if (index in 0 until colors.size) {
+                        return colors.values.toList()[index] // Get the color from the map
+                    } else {
+                        println("Your choice for color change - $colorInput is not valid. Please choose a number between 0 and ${colors.size - 1}.")
+                    }
+                } else {
+                    println("Invalid input! Please enter a valid number.")
+                }
+            }
+        } catch (e: Exception) {
+            println("An error occurred while picking the color: $e")
+            throw e // Optionally rethrow the exception if you need to handle it further
+        }
+    }
+
+
+    private fun pickCard(maxChoice: Int): Card {
+        try {
+            while (true) {
+                println("Pick a number between 0 and $maxChoice. Counting from left.")
+                val input = readln()
+                if (input.toInt() in 0..maxChoice) {
+                    val pickedCard =  player.playCard(input.toInt())
+                    return pickedCard
+                } else {
+                    println("Your choice $input is not valid")
+                }
+            }
+        } catch (e: Exception) {
+            println("Play move had an error : $e")
+            throw e
+        }
+    }
+
 
     private fun drawCard() {
         println("You don't have a valid card to play. You will draw a card.")
@@ -123,6 +174,12 @@ class Turn(
     private fun pass() {
         println("You don't have a valid card to play. Passing to the next player. Turn has ended.")
         playedCard = playingCard
+    }
+
+    private fun showColors() {
+        colors.forEach { (i, color) ->
+            println("Pick $i for $color")
+        }
     }
 
     private fun illegalMove() {

@@ -93,7 +93,7 @@ class Deck(type: DeckType) {
 
     fun dealFromDeck(n: Int): Collection {
         val dealingCards = mutableListOf<Card>()
-        for ( i in 1 .. n) {
+        for (i in 1..n) {
             dealingCards.add(this.deck.removeFirst())
         }
         return dealingCards

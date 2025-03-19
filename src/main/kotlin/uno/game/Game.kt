@@ -8,7 +8,7 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
 
     private var activePlayers = mutableListOf<Player>()
     private var deck = Deck(type)
-    private var direction = false
+    private var direction = true
     private var currentPlayer = 0
     private var playinCard: Card? = null
     private lateinit var currentColor: CardColor
@@ -87,23 +87,50 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
             ).playTurn()
 
             println(lastTurn)
+
             turns.add(lastTurn)
 
             // check for reverse
-            if(lastTurn.playedCard.value == CardValue.REVERSE) {
+            if (lastTurn.playedCard.value == CardValue.REVERSE) {
                 reverse()
             }
 
-            // check for skip
+            selectNextPlayer(lastTurn.playedCard)
 
 
             // wild card
 
-
             // draw
 
-            // select next player
 
+        }
+    }
+
+    private fun selectNextPlayer(playedCard: Card) {
+        when (direction) {
+            // clockwise
+            true -> {
+                // check for skip
+                println(activePlayers.size)
+                println(currentPlayer)
+                currentPlayer = if (playedCard.value == CardValue.SKIP) {
+                    (currentPlayer + 2) % activePlayers.size
+                } else {
+                    (currentPlayer + 1) % activePlayers.size
+                }
+                println(currentPlayer)
+            }
+
+            // anti-clockwise
+            false -> {
+                // check for skip
+                currentPlayer = if (playedCard.value == CardValue.SKIP) {
+                    (((currentPlayer - 2) % activePlayers.size) + activePlayers.size) % activePlayers.size
+                } else {
+                    // positive modulo
+                    (((currentPlayer - 1) % activePlayers.size) + activePlayers.size) % activePlayers.size
+                }
+            }
         }
     }
 
