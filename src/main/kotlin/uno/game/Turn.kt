@@ -178,6 +178,7 @@ class Turn(
             println("You will have to draw ${cardStash.size}.")
             //print the stash
             player.draw(cardStash)
+            cardStash.clear()
         } else {
             println("You don't have a valid card to play. You will draw a card.")
             player.draw(deck.dealFromDeck(1))
