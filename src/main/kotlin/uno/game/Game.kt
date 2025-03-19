@@ -78,18 +78,24 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
     private fun playGame() {
         while (true) {
 
+            var cardStash = mutableListOf<Card>()
+
             val lastTurn = Turn(
                 activePlayers[currentPlayer],
                 turns.count(),
                 deck,
                 playinCard!!,
-                currentColor
+                currentColor,
+                cardStash
             ).playTurn()
 
+            // update the playing card
             playinCard = lastTurn.playedCard
+
+            // push last turn summary to the turns history
             turns.add(lastTurn)
 
-            // check for reverse
+            // check for reverse and update game directions
             if (lastTurn.playedCard.value == CardValue.REVERSE) {
                 reverse()
             }
@@ -99,9 +105,25 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
             println(lastTurn)
 
             // wild card
+            // if wild card was played update the color
+            if(lastTurn.colorChoice != null){
+                currentColor = lastTurn.colorChoice
+            }
 
             // draw
+            if(lastTurn.playedCard.value == CardValue.DRAW){
+                val drawnCards = when (lastTurn.playedCard.color) {
+                    CardColor.WILD -> {
+                        deck.dealFromDeck(4)
+                    }
 
+                    else -> {
+                        deck.dealFromDeck(2)
+                    }
+                }
+
+                cardStash+= drawnCards
+            }
 
         }
     }

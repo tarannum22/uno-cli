@@ -8,8 +8,8 @@ import utlis.generateUniqueId
 
 class Player(private val name: String) {
     private val id = generateUniqueId()
-    private var hand : Collection  = mutableListOf()
-    val isUNO :Boolean = false
+    private var hand: Collection = mutableListOf()
+    val isUNO: Boolean = false
 
     fun showInfo() {
         println("Player ID : ${this.id} Name : $name")
@@ -27,28 +27,44 @@ class Player(private val name: String) {
         println()
     }
 
-    fun getName() : String {
+    fun getName(): String {
         return name
     }
 
     fun draw(cards: Collection) {
-        hand+= cards
+        hand += cards
     }
 
     private fun hasColor(color: CardColor): Boolean {
         return hand.any { it.color == color }
     }
 
-    private fun hasValue(value: CardValue) : Boolean {
+    private fun hasValue(value: CardValue): Boolean {
         return hand.any { it.value == value }
     }
 
-    private fun hasWild() : Boolean {
+    private fun hasWild(): Boolean {
         return hand.any { it.color == CardColor.WILD }
     }
 
-    fun hasPlayingCard(playingCard: Card): Boolean {
-        return hasColor(playingCard.color) || hasValue(playingCard.value) || hasWild()
+    fun hasPlayingCard(playingCard: Card, currentColor: CardColor): Boolean {
+        return if (playingCard.value == CardValue.DRAW) {
+            if(playingCard.color == CardColor.WILD){
+                checkHandForWildDraw()
+            } else {
+                checkHandForDraw()
+            }
+        } else {
+            (hasColor(currentColor) || hasValue(playingCard.value) || hasWild())
+        }
+    }
+
+    private fun checkHandForDraw(): Boolean {
+        return (hand.firstOrNull { it.value == CardValue.DRAW } ) != null
+    }
+
+    private fun checkHandForWildDraw(): Boolean {
+        return (hand.firstOrNull { it.value == CardValue.DRAW && it.color == CardColor.WILD } ) != null
     }
 
     fun getHandCount(): Int {

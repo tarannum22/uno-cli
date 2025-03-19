@@ -1,6 +1,17 @@
 package `interface`
 
-import utlis.colorString
+import utlis.prettyPrintln
+import utlis.prettyString
+
+enum class StringEffect(val code: String) {
+    RED("\\u001b[31m"),
+    BLUE("\u001b[34m"),
+    YELLOW("\\u001B[33m"),
+    GREEN("\\u001B[32m"),
+    UNDERLINE("\\u001B[4m"),
+    CYAN("\\u001b[36m"),
+    MAGENTA("\\u001b[1;35 m")
+}
 
 fun welcomeMessage() {
 
@@ -13,20 +24,12 @@ fun welcomeMessage() {
 //    Bold Magenta : \u001b[1;35 m
 //    Bold Cyan : \u001b[1;36 m
 //    Bold White : \u001b[1;37 m
-//
-//    Red: \u001b[31m
-//    Green: \u001b[32m
-//    Yellow: \u001b[33m
-//    Blue: \u001b[34m
-//    Magenta: \u001b[35m
-//    Cyan: \u001b[36m
-//    White: \u001b[37m
 
+//    println(prettyPrintln("Let's play UNO!", StringEffect.BLUE))
 
-    println(colorString("Let's play UNO!", boldBLue))
+    println("Let's play UNO!")
     println("------------------------")
     println()
 
 }
-
 

@@ -2,8 +2,8 @@ package uno.game
 
 import uno.deck.Card
 import uno.deck.CardColor
+import uno.deck.CardValue
 import uno.deck.Deck
-import java.awt.Choice
 
 enum class Move {
     PLAY_HAND,
@@ -24,6 +24,7 @@ data class TurnSummary(
     val playingCard: Card,
     val playedCard: Card,
     val colorChoice: CardColor?,
+    val cardStash: MutableList<Card>,
     val moves: MutableList<String>
 )
 
@@ -32,12 +33,13 @@ class Turn(
     private val turnNumber: Int,
     private val deck: Deck,
     private val playingCard: Card,
-    private val currentColor: CardColor?
+    private val currentColor: CardColor,
+    private val cardStash: MutableList<Card>
 ) {
 
     private var turnFSM = TurnStateMachine()
     private lateinit var playedCard: Card
-    private var colorChoice : CardColor? = null
+    private var colorChoice: CardColor? = null
     private val colors = mapOf(
         0 to CardColor.RED,
         1 to CardColor.BLUE,
@@ -66,6 +68,7 @@ class Turn(
             playingCard,
             playedCard,
             colorChoice,
+            cardStash,
             mutableListOf("move1, move2")
         )
     }
@@ -73,7 +76,7 @@ class Turn(
     private fun makeMove() {
         when (turnFSM.state) {
             TurnState.TURN_START -> {
-                if (player.hasPlayingCard(playingCard)) {
+                if (player.hasPlayingCard(playingCard, currentColor)) {
                     playHand()
                     turnFSM.updateTurnState(Move.PLAY_HAND)
                 } else {
@@ -83,7 +86,7 @@ class Turn(
             }
 
             TurnState.CARD_DRAWN -> {
-                if (player.hasPlayingCard(playingCard)) {
+                if (player.hasPlayingCard(playingCard, currentColor)) {
                     playHand()
                     turnFSM.updateTurnState(Move.PLAY_HAND)
                 } else {
@@ -107,7 +110,7 @@ class Turn(
 
         val pickedCard = pickCard(maxChoice)
 
-        if (pickedCard.color == CardColor.WILD){
+        if (pickedCard.color == CardColor.WILD) {
             pickColor()
         }
 
@@ -151,7 +154,7 @@ class Turn(
                 println("Pick a number between 0 and $maxChoice. Counting from left.")
                 val input = readln()
                 if (input.toInt() in 0..maxChoice) {
-                    val pickedCard =  player.playCard(input.toInt())
+                    val pickedCard = player.playCard(input.toInt())
                     return pickedCard
                 } else {
                     println("Your choice $input is not valid")
@@ -165,8 +168,14 @@ class Turn(
 
 
     private fun drawCard() {
-        println("You don't have a valid card to play. You will draw a card.")
-        player.draw(deck.dealFromDeck(1))
+        if(playingCard.value == CardValue.DRAW) {
+            println("You will have to draw ${cardStash.size}.")
+            //print the stash
+            player.draw(cardStash)
+        } else {
+            println("You don't have a valid card to play. You will draw a card.")
+            player.draw(deck.dealFromDeck(1))
+        }
         print("Your new hand ----")
         player.showHand()
     }

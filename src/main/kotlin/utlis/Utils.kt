@@ -1,5 +1,6 @@
 package utlis
 
+import `interface`.StringEffect
 import kotlin.random.Random
 
 fun generateUniqueId(): String {
@@ -9,7 +10,11 @@ fun generateUniqueId(): String {
     return id
 }
 
-fun colorString(string: String, code: String): String {
+fun prettyString(string: String, effect: StringEffect): String {
     val reset = "\u001b[0m"
-    return code + string + reset
+    return effect.code + string + reset
+}
+
+fun prettyPrintln(string: String, effect: StringEffect) {
+    println(prettyString(string, effect))
 }
