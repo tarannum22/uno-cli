@@ -81,13 +81,14 @@ class Turn(
                     playHand()
                     turnFSM.updateTurnState(Move.PLAY_HAND)
                 } else {
-                    drawCard()
                     if (playingCard.value == CardValue.DRAW) {
+                        drawStash()
                         println("You have drawn the stash. Ending the turn.")// if drawing stash pass
-                        pass()
                         turnFSM.updateTurnState(Move.DRAW_STASH)
+                    } else {
+                        drawOneCard()
+                        turnFSM.updateTurnState(Move.DRAW)
                     }
-                    turnFSM.updateTurnState(Move.DRAW)
                 }
             }
 
@@ -175,18 +176,23 @@ class Turn(
     }
 
 
-    private fun drawCard() {
+    private fun drawOneCard() {
+        println("You don't have a valid card to play. You will draw a card.")
+        player.draw(deck.dealFromDeck(1))
+        println("Your new hand ----")
+        player.showHand()
+    }
+
+    private fun drawStash() {
         if (playingCard.value == CardValue.DRAW) {
             println("You will have to draw ${cardStash.size}.")
             //print the stash
             player.draw(cardStash)
             cardStash.clear()
-        } else {
-            println("You don't have a valid card to play. You will draw a card.")
-            player.draw(deck.dealFromDeck(1))
         }
         println("Your new hand ----")
         player.showHand()
+        playedCard = playingCard
     }
 
     private fun pass() {
@@ -207,7 +213,7 @@ class Turn(
 }
 
 
-class TurnStateMachine() {
+class TurnStateMachine {
 
     var state: TurnState = TurnState.TURN_START
 

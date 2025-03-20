@@ -92,8 +92,6 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
             // update the playing card
             playinCard = lastTurn.playedCard
 
-            // push last turn summary to the turns history
-            turns.add(lastTurn)
 
             // check for reverse and update game directions
             if (lastTurn.playedCard.value == CardValue.REVERSE) {
@@ -110,8 +108,13 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
                 currentColor = lastTurn.colorChoice
             }
 
+            // check for wildcard that was already drawn
+            if(lastTurn.playedCard.value == CardValue.DRAW && lastTurn.playedCard.color == CardColor.WILD && (turns.last().playedCard == lastTurn.playedCard)){
+                println("Wildcard already drawn.")
+            }
+
             // draw
-            if (lastTurn.playedCard.value == CardValue.DRAW) {
+            if (lastTurn.playedCard.value == CardValue.DRAW && (turns.last().playedCard !== lastTurn.playedCard)) {
                 val drawnCards = when (lastTurn.playedCard.color) {
                     CardColor.WILD -> {
                         deck.dealFromDeck(4)
@@ -129,6 +132,9 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
                 println("Stash - $cardStash")
 
             }
+
+            // push last turn summary to the turns history
+            turns.add(lastTurn)
 
             if (lastTurn.playerCardCount == 0){
                 //WIN CONDITION
