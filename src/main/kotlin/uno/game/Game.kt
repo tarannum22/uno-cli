@@ -102,22 +102,31 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
 
             println(lastTurn)
 
-            // wild card
             // if wild card was played update the color
             if (lastTurn.colorChoice != null) {
                 currentColor = lastTurn.colorChoice
+            } else {
+                currentColor = lastTurn.playedCard.color
             }
 
             // check for wildcard that was already drawn
-            if(lastTurn.playedCard.value == CardValue.DRAW && lastTurn.playedCard.color == CardColor.WILD && (turns.last().playedCard == lastTurn.playedCard)){
-                println("Wildcard already drawn.")
+            var wildCardAlreadyDrawn = false
+            if (turns.size > 0) {
+                if (lastTurn.playedCard.value == CardValue.DRAW && lastTurn.playedCard.color == CardColor.WILD && (turns.last().playedCard == lastTurn.playedCard)) {
+                    println("Wildcard already drawn.")
+                    wildCardAlreadyDrawn = true
+                }
             }
 
             // draw
-            if (lastTurn.playedCard.value == CardValue.DRAW && (turns.last().playedCard !== lastTurn.playedCard)) {
+            if (lastTurn.playedCard.value == CardValue.DRAW) {
                 val drawnCards = when (lastTurn.playedCard.color) {
                     CardColor.WILD -> {
-                        deck.dealFromDeck(4)
+                        if (wildCardAlreadyDrawn) {
+                            deck.dealFromDeck(0)
+                        } else {
+                            deck.dealFromDeck(4)
+                        }
                     }
 
                     else -> {
@@ -125,10 +134,7 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
                     }
                 }
 
-                println("Drawn cards $drawnCards")
-
                 cardStash += drawnCards
-
                 println("Stash - $cardStash")
 
             }
@@ -136,7 +142,7 @@ class Game(players: Players, type: DeckType = DeckType.STANDARD) {
             // push last turn summary to the turns history
             turns.add(lastTurn)
 
-            if (lastTurn.playerCardCount == 0){
+            if (lastTurn.playerCardCount == 0) {
                 //WIN CONDITION
                 println("Player ${lastTurn.player.getName()} has won.")
                 break

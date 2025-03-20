@@ -196,7 +196,7 @@ class Turn(
     }
 
     private fun pass() {
-        println("You don't have a valid card to play. Passing to the next player. Turn has ended.")
+        println("You don't have a valid card to play. Passing to the next player.")
         playedCard = playingCard
     }
 
